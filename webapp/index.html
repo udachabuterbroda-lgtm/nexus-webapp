@@ -3,108 +3,737 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS РАБОТАЕТ</title>
+    <title>NEXUS • ВСЁ В ОДНОМ</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            background-color: #0a0f1f;
-            color: white;
-            font-family: sans-serif;
-            padding: 20px;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #0a0f1f;
+            color: white;
+            padding: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            background: #121826;
+            padding: 6px;
+            border-radius: 100px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-tab {
+            padding: 10px 16px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+            color: #a0b0c0;
+            white-space: nowrap;
+        }
+        .nav-tab.active {
+            background: #2e7eff;
+            color: white;
+        }
+        .nav-tab:hover {
+            background: #3a4a6a;
+            color: white;
         }
         .card {
-            background: #1a1f2f;
-            border-radius: 20px;
+            background: #1a1f30;
+            border-radius: 24px;
             padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #333a4a;
+            margin-bottom: 16px;
+            border: 1px solid #2e3a4a;
         }
-        button {
+        h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tariff-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #121826;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #2a3344;
+        }
+        .tariff-info h3 {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        .tariff-info p {
+            font-size: 14px;
+            color: #a0b0c0;
+        }
+        .tariff-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-right: 12px;
+        }
+        .buy-btn {
             background: #2e7eff;
             color: white;
             border: none;
-            border-radius: 15px;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .buy-btn:hover {
+            background: #1a5bbf;
+        }
+        .slider-item {
+            margin: 20px 0;
+        }
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        input[type=range] {
             width: 100%;
-            margin-top: 10px;
+            height: 6px;
+            background: #2a3344;
+            border-radius: 10px;
+            -webkit-appearance: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #2e7eff;
             cursor: pointer;
         }
-        .price {
-            font-size: 30px;
+        .total {
+            background: linear-gradient(135deg, #2e7eff, #9d4eff);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .total-amount {
+            font-size: 32px;
             font-weight: bold;
-            color: #ffd700;
+        }
+        .btn {
+            background: #2e7eff;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 14px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: 0.2s;
+        }
+        .btn.secondary {
+            background: #333a4a;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .input-field, select {
+            width: 100%;
+            padding: 14px;
+            background: #121826;
+            border: 1px solid #2a3344;
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        .input-field:focus, select:focus {
+            outline: none;
+            border-color: #2e7eff;
+        }
+        .result-box {
+            background: #121826;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+            border: 1px solid #2a3344;
+            display: none;
+        }
+        .result-item {
+            padding: 8px;
+            border-bottom: 1px solid #2a3344;
+        }
+        .footer {
+            text-align: center;
+            color: #6a7a8a;
+            font-size: 12px;
+            margin-top: 30px;
+        }
+        .feature-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #2a3344;
+        }
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: #2a3344;
+            border-radius: 100px;
+            position: relative;
+            cursor: pointer;
+        }
+        .toggle-switch.active {
+            background: #2e7eff;
+        }
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.2s;
+        }
+        .toggle-switch.active::before {
+            left: 22px;
+        }
+        .badge {
+            background: #2e7eff;
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-size: 10px;
+            margin-left: 8px;
         }
     </style>
 </head>
 <body>
-    <h1>🔥 NEXUS PREMIUM</h1>
-    <p>Здесь всё работает!</p>
-
-    <div class="card">
-        <h2>💰 Тарифы</h2>
-        <p><strong>🔥 Сутки</strong> - 5 ⭐ (2 потока)</p>
-        <p><strong>⚡ Месяц</strong> - 15 ⭐ (3 потока)</p>
-        <p><strong>💪 Полгода</strong> - 45 ⭐ (7 потоков)</p>
-        <p><strong>👑 Год</strong> - 85 ⭐ (15 потоков)</p>
-        <button onclick="buyTariff('month')">Купить Месяц за 15 ⭐</button>
+    <!-- НАВИГАЦИЯ -->
+    <div class="nav-tabs">
+        <div class="nav-tab active" data-tab="tariffs">💰 Тарифы</div>
+        <div class="nav-tab" data-tab="parse">🔍 Парсинг</div>
+        <div class="nav-tab" data-tab="invite">📨 Инвайтинг</div>
+        <div class="nav-tab" data-tab="warmup">🔥 Прогрев</div>
+        <div class="nav-tab" data-tab="stats">📊 Статистика</div>
+        <div class="nav-tab" data-tab="profile">👤 Профиль</div>
     </div>
 
-    <div class="card">
-        <h2>⚙️ Конструктор</h2>
-        <p>Потоки: <span id="threadsVal">5</span></p>
-        <input type="range" id="threads" min="1" max="20" value="5">
-        <p>Дни: <span id="daysVal">30</span></p>
-        <input type="range" id="days" min="1" max="365" value="30">
-        <p class="price" id="totalPrice">1040₽</p>
-        <button onclick="buyCustom()">Купить конструктор</button>
+    <!-- ========== ВКЛАДКА ТАРИФЫ ========== -->
+    <div id="tab-tariffs" class="tab-content active">
+        <div class="card">
+            <h2>💰 ГОТОВЫЕ ТАРИФЫ</h2>
+            <div class="tariff-item">
+                <div class="tariff-info">
+                    <h3>🔥 Сутки</h3>
+                    <p>2 потока · 24 часа · базовый парсинг</p>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="tariff-price">5⭐</span>
+                    <button class="buy-btn" data-tariff="day">Купить</button>
+                </div>
+            </div>
+            <div class="tariff-item" style="border-color: #2e7eff;">
+                <div class="tariff-info">
+                    <h3>⚡ Месяц <span class="badge">ХИТ</span></h3>
+                    <p>3 потока · 30 дней · полный функционал</p>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="tariff-price">15⭐</span>
+                    <button class="buy-btn" data-tariff="month">Купить</button>
+                </div>
+            </div>
+            <div class="tariff-item">
+                <div class="tariff-info">
+                    <h3>💪 Полгода</h3>
+                    <p>7 потоков · 180 дней · приоритет</p>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="tariff-price">45⭐</span>
+                    <button class="buy-btn" data-tariff="halfyear">Купить</button>
+                </div>
+            </div>
+            <div class="tariff-item">
+                <div class="tariff-info">
+                    <h3>👑 Год</h3>
+                    <p>15 потоков · 365 дней · VIP</p>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <span class="tariff-price">85⭐</span>
+                    <button class="buy-btn" data-tariff="year">Купить</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⚙️ КОНСТРУКТОР ТАРИФА</h2>
+            <!-- Потоки -->
+            <div class="slider-item">
+                <div class="slider-header">
+                    <span>📊 Потоки</span>
+                    <span id="threadsVal">5</span>
+                </div>
+                <input type="range" id="threads" min="1" max="20" value="5">
+            </div>
+            <!-- Дни -->
+            <div class="slider-item">
+                <div class="slider-header">
+                    <span>⏱️ Дни</span>
+                    <span id="daysVal">30</span>
+                </div>
+                <input type="range" id="days" min="1" max="365" value="30">
+            </div>
+            <!-- Скорость инвайтинга (сообщений/мин) -->
+            <div class="slider-item">
+                <div class="slider-header">
+                    <span>📨 Скорость инвайтинга</span>
+                    <span id="inviteSpeedVal">10/мин</span>
+                </div>
+                <input type="range" id="inviteSpeed" min="5" max="60" value="10">
+            </div>
+            <!-- Задержка между действиями прогрева (сек) -->
+            <div class="slider-item">
+                <div class="slider-header">
+                    <span>⏸️ Задержка прогрева</span>
+                    <span id="warmupDelayVal">5 сек</span>
+                </div>
+                <input type="range" id="warmupDelay" min="2" max="30" value="5">
+            </div>
+            <!-- Доп. функции (тогглы) -->
+            <div class="feature-toggle">
+                <span>🔍 Расширенный парсинг (био, гео)</span>
+                <div class="toggle-switch" id="toggleAdvancedParse"></div>
+            </div>
+            <div class="feature-toggle">
+                <span>📊 Экспорт в Excel + CSV</span>
+                <div class="toggle-switch" id="toggleExport"></div>
+            </div>
+            <div class="feature-toggle">
+                <span>🤖 Авто-прогрев (24/7)</span>
+                <div class="toggle-switch" id="toggleAutoWarmup"></div>
+            </div>
+
+            <div class="total">
+                <div>
+                    <div>ИТОГО</div>
+                    <div style="font-size: 12px;">цена в звёздах</div>
+                </div>
+                <div class="total-amount" id="totalPrice">149⭐</div>
+            </div>
+            <button class="btn" id="buyCustomBtn">🚀 КУПИТЬ КОНСТРУКТОР</button>
+        </div>
+    </div>
+
+    <!-- ========== ВКЛАДКА ПАРСИНГ ========== -->
+    <div id="tab-parse" class="tab-content">
+        <div class="card">
+            <h2>🔍 ПАРСИНГ</h2>
+            <select id="parseType">
+                <option value="members">👥 Участники чата/группы</option>
+                <option value="commentators">💬 Комментаторы канала</option>
+                <option value="search">🔎 Поиск чатов по ключевым словам</option>
+            </select>
+            <div id="membersInput">
+                <input type="text" class="input-field" id="chatLink" placeholder="Ссылка на чат (например, @channel)">
+                <input type="number" class="input-field" id="memberLimit" placeholder="Лимит (макс 1000)" value="500">
+            </div>
+            <div id="commentatorsInput" style="display: none;">
+                <input type="text" class="input-field" id="channelLink" placeholder="Ссылка на канал (@channel)">
+                <input type="number" class="input-field" id="postsLimit" placeholder="Количество постов" value="5">
+            </div>
+            <div id="searchInput" style="display: none;">
+                <input type="text" class="input-field" id="keywords" placeholder="Ключевые слова (через запятую)">
+                <input type="number" class="input-field" id="searchLimit" placeholder="Лимит" value="50">
+            </div>
+            <button class="btn" id="startParseBtn">🚀 НАЧАТЬ ПАРСИНГ</button>
+            <div class="result-box" id="parseResult">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Результаты: <span id="parseCount">0</span></span>
+                    <div>
+                        <button class="btn secondary" style="padding: 4px 8px; width: auto;" id="exportCsvBtn">CSV</button>
+                        <button class="btn secondary" style="padding: 4px 8px; width: auto;" id="exportExcelBtn">Excel</button>
+                    </div>
+                </div>
+                <div id="parseList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== ВКЛАДКА ИНВАЙТИНГ ========== -->
+    <div id="tab-invite" class="tab-content">
+        <div class="card">
+            <h2>📨 ИНВАЙТИНГ</h2>
+            <input type="text" class="input-field" id="inviteChat" placeholder="Ссылка на чат для приглашения">
+            <select id="inviteSource" class="input-field">
+                <option value="file">📁 Из загруженного файла</option>
+                <option value="parse">📊 Из последнего парсинга</option>
+            </select>
+            <div id="inviteFileInput" style="display: block;">
+                <input type="file" id="inviteFile" accept=".txt,.csv" style="display: none;">
+                <button class="btn secondary" id="chooseFileBtn">📁 Выбрать файл с юзерами</button>
+                <span id="fileName"></span>
+            </div>
+            <div class="slider-item">
+                <div class="slider-header">
+                    <span>⏱️ Задержка между приглашениями (сек)</span>
+                    <span id="inviteDelayVal">5</span>
+                </div>
+                <input type="range" id="inviteDelay" min="2" max="60" value="5">
+            </div>
+            <button class="btn" id="startInviteBtn">🚀 ЗАПУСТИТЬ ИНВАЙТИНГ</button>
+        </div>
+    </div>
+
+    <!-- ========== ВКЛАДКА ПРОГРЕВ ========== -->
+    <div id="tab-warmup" class="tab-content">
+        <div class="card">
+            <h2>🔥 ПРОГРЕВ АККАУНТОВ</h2>
+            <select id="warmupAccounts" class="input-field">
+                <option value="all">👥 Все активные аккаунты</option>
+                <option value="selected">🔘 Выбрать конкретные</option>
+            </select>
+            <div class="slider-item">
+                <div class="slider-header">
+                    <span>⏱️ Задержка между действиями (сек)</span>
+                    <span id="warmupDelayVal2">5</span>
+                </div>
+                <input type="range" id="warmupDelay2" min="2" max="30" value="5">
+            </div>
+            <div style="margin: 16px 0;">
+                <label style="display: block; margin-bottom: 8px;">Типы действий:</label>
+                <label><input type="checkbox" id="actionView" checked> 👁️ Просмотр профилей</label><br>
+                <label><input type="checkbox" id="actionLike" checked> ❤️ Лайки</label><br>
+                <label><input type="checkbox" id="actionComment"> 💬 Комментарии</label><br>
+                <label><input type="checkbox" id="actionJoin"> ➕ Вступление в чаты</label>
+            </div>
+            <button class="btn" id="startWarmupBtn">🔥 ЗАПУСТИТЬ ПРОГРЕВ</button>
+        </div>
+    </div>
+
+    <!-- ========== ВКЛАДКА СТАТИСТИКА ========== -->
+    <div id="tab-stats" class="tab-content">
+        <div class="card">
+            <h2>📊 СТАТИСТИКА</h2>
+            <div id="statsContent">Загрузка...</div>
+            <button class="btn secondary" id="refreshStatsBtn">🔄 ОБНОВИТЬ</button>
+        </div>
+    </div>
+
+    <!-- ========== ВКЛАДКА ПРОФИЛЬ ========== -->
+    <div id="tab-profile" class="tab-content">
+        <div class="card">
+            <h2>👤 ПРОФИЛЬ</h2>
+            <div id="profileContent">Загрузка...</div>
+            <button class="btn secondary" id="refreshProfileBtn">🔄 ОБНОВИТЬ</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        NEXUS • ВСЁ В ОДНОМ
     </div>
 
     <script>
         const tg = Telegram.WebApp;
-        tg.expand(); // Растянуть на весь экран
-        tg.ready();  // Сказать Telegram, что мы готовы
+        tg.expand();
+        tg.ready();
 
-        // Функция для ползунков
-        function updatePrice() {
-            let threads = document.getElementById('threads').value;
-            let days = document.getElementById('days').value;
-            document.getElementById('threadsVal').innerText = threads;
-            document.getElementById('daysVal').innerText = days;
-            let price = (threads * 50) + (days * 15);
-            price = price * 1.3;
-            if (price < 199) price = 199;
-            document.getElementById('totalPrice').innerText = Math.round(price) + '₽';
+        // ---------- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ----------
+        const tabs = document.querySelectorAll('.nav-tab');
+        const contents = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                contents.forEach(c => c.classList.remove('active'));
+                document.getElementById(`tab-${target}`).classList.add('active');
+            });
+        });
+
+        // ---------- ОБЩИЕ ДАННЫЕ ----------
+        let constructorState = {
+            threads: 5,
+            days: 30,
+            inviteSpeed: 10,
+            warmupDelay: 5,
+            advancedParse: false,
+            exportEnabled: false,
+            autoWarmup: false
+        };
+
+        // Элементы конструктора
+        const threadsInput = document.getElementById('threads');
+        const daysInput = document.getElementById('days');
+        const inviteSpeedInput = document.getElementById('inviteSpeed');
+        const warmupDelayInput = document.getElementById('warmupDelay');
+        const threadsVal = document.getElementById('threadsVal');
+        const daysVal = document.getElementById('daysVal');
+        const inviteSpeedVal = document.getElementById('inviteSpeedVal');
+        const warmupDelayVal = document.getElementById('warmupDelayVal');
+        const totalPriceSpan = document.getElementById('totalPrice');
+        const toggleAdvanced = document.getElementById('toggleAdvancedParse');
+        const toggleExport = document.getElementById('toggleExport');
+        const toggleAuto = document.getElementById('toggleAutoWarmup');
+
+        // Функция обновления цены конструктора
+        function updateConstructorPrice() {
+            const threads = parseInt(threadsInput.value);
+            const days = parseInt(daysInput.value);
+            const inviteSpeed = parseInt(inviteSpeedInput.value);
+            const warmupDelay = parseInt(warmupDelayInput.value);
+
+            threadsVal.innerText = threads;
+            daysVal.innerText = days;
+            inviteSpeedVal.innerText = inviteSpeed + '/мин';
+            warmupDelayVal.innerText = warmupDelay + ' сек';
+
+            // Базовая стоимость в рублях
+            let priceRub = (threads * 50) + (days * 15) + (inviteSpeed * 2) + (warmupDelay * 1);
+            priceRub = Math.round(priceRub * 1.3);
+            if (constructorState.advancedParse) priceRub += 200;
+            if (constructorState.exportEnabled) priceRub += 150;
+            if (constructorState.autoWarmup) priceRub += 300;
+            if (priceRub < 199) priceRub = 199;
+
+            const stars = Math.max(1, Math.round(priceRub / 7));
+            totalPriceSpan.innerText = stars + '⭐';
         }
 
-        // Следим за движением ползунков
-        document.getElementById('threads').oninput = updatePrice;
-        document.getElementById('days').oninput = updatePrice;
+        // События на слайдеры
+        threadsInput.addEventListener('input', updateConstructorPrice);
+        daysInput.addEventListener('input', updateConstructorPrice);
+        inviteSpeedInput.addEventListener('input', updateConstructorPrice);
+        warmupDelayInput.addEventListener('input', updateConstructorPrice);
 
-        // Покупка тарифа
-        function buyTariff(tariff) {
-            tg.sendData(JSON.stringify({
-                action: 'buy_tariff',
-                tariff: tariff
-            }));
-            tg.close(); // Закрыть мини-приложение после покупки
-        }
+        // Тогглы
+        toggleAdvanced.addEventListener('click', () => {
+            toggleAdvanced.classList.toggle('active');
+            constructorState.advancedParse = toggleAdvanced.classList.contains('active');
+            updateConstructorPrice();
+        });
+        toggleExport.addEventListener('click', () => {
+            toggleExport.classList.toggle('active');
+            constructorState.exportEnabled = toggleExport.classList.contains('active');
+            updateConstructorPrice();
+        });
+        toggleAuto.addEventListener('click', () => {
+            toggleAuto.classList.toggle('active');
+            constructorState.autoWarmup = toggleAuto.classList.contains('active');
+            updateConstructorPrice();
+        });
+
+        // Покупка готового тарифа
+        document.querySelectorAll('.buy-btn[data-tariff]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tariff = e.target.dataset.tariff;
+                tg.sendData(JSON.stringify({ action: 'buy_tariff', tariff }));
+                tg.HapticFeedback.notificationOccurred('success');
+                tg.close();
+            });
+        });
 
         // Покупка конструктора
-        function buyCustom() {
+        document.getElementById('buyCustomBtn').addEventListener('click', () => {
+            const threads = threadsInput.value;
+            const days = daysInput.value;
+            const inviteSpeed = inviteSpeedInput.value;
+            const warmupDelay = warmupDelayInput.value;
+            const advancedParse = constructorState.advancedParse;
+            const exportEnabled = constructorState.exportEnabled;
+            const autoWarmup = constructorState.autoWarmup;
+
+            // Рассчёт цены в рублях (для бота)
+            let priceRub = (parseInt(threads) * 50 + parseInt(days) * 15 + parseInt(inviteSpeed) * 2 + parseInt(warmupDelay) * 1) * 1.3;
+            if (advancedParse) priceRub += 200;
+            if (exportEnabled) priceRub += 150;
+            if (autoWarmup) priceRub += 300;
+            priceRub = Math.round(priceRub);
+            if (priceRub < 199) priceRub = 199;
+
             tg.sendData(JSON.stringify({
                 action: 'buy_custom',
-                threads: document.getElementById('threads').value,
-                days: document.getElementById('days').value,
-                price: document.getElementById('totalPrice').innerText
+                threads,
+                days,
+                inviteSpeed,
+                warmupDelay,
+                advancedParse,
+                exportEnabled,
+                autoWarmup,
+                price: priceRub + '₽'
             }));
+            tg.HapticFeedback.notificationOccurred('success');
             tg.close();
-        }
+        });
 
-        // Запускаем обновление цены при загрузке
-        updatePrice();
+        // ---------- ПАРСИНГ ----------
+        const parseType = document.getElementById('parseType');
+        const membersDiv = document.getElementById('membersInput');
+        const commentatorsDiv = document.getElementById('commentatorsInput');
+        const searchDiv = document.getElementById('searchInput');
+
+        parseType.addEventListener('change', () => {
+            const val = parseType.value;
+            membersDiv.style.display = val === 'members' ? 'block' : 'none';
+            commentatorsDiv.style.display = val === 'commentators' ? 'block' : 'none';
+            searchDiv.style.display = val === 'search' ? 'block' : 'none';
+        });
+
+        document.getElementById('startParseBtn').addEventListener('click', () => {
+            const type = parseType.value;
+            let data = { action: 'start_parsing', type };
+            if (type === 'members') {
+                data.chat_link = document.getElementById('chatLink').value;
+                data.limit = document.getElementById('memberLimit').value;
+            } else if (type === 'commentators') {
+                data.channel_link = document.getElementById('channelLink').value;
+                data.posts_limit = document.getElementById('postsLimit').value;
+            } else if (type === 'search') {
+                data.keywords = document.getElementById('keywords').value;
+                data.limit = document.getElementById('searchLimit').value;
+            }
+            tg.sendData(JSON.stringify(data));
+            tg.HapticFeedback.impactOccurred('medium');
+            document.getElementById('parseResult').style.display = 'block';
+            document.getElementById('parseList').innerHTML = '<p>⏳ Парсинг запущен...</p>';
+        });
+
+        document.getElementById('exportCsvBtn').addEventListener('click', () => {
+            tg.sendData(JSON.stringify({ action: 'export_csv' }));
+        });
+        document.getElementById('exportExcelBtn').addEventListener('click', () => {
+            tg.sendData(JSON.stringify({ action: 'export_excel' }));
+        });
+
+        // ---------- ИНВАЙТИНГ ----------
+        const inviteSource = document.getElementById('inviteSource');
+        const inviteFileDiv = document.getElementById('inviteFileInput');
+        inviteSource.addEventListener('change', () => {
+            inviteFileDiv.style.display = inviteSource.value === 'file' ? 'block' : 'none';
+        });
+
+        document.getElementById('chooseFileBtn').addEventListener('click', () => {
+            document.getElementById('inviteFile').click();
+        });
+        document.getElementById('inviteFile').addEventListener('change', (e) => {
+            document.getElementById('fileName').innerText = e.target.files[0]?.name || '';
+        });
+
+        const inviteDelay = document.getElementById('inviteDelay');
+        const inviteDelayVal = document.getElementById('inviteDelayVal');
+        inviteDelay.addEventListener('input', () => {
+            inviteDelayVal.innerText = inviteDelay.value;
+        });
+
+        document.getElementById('startInviteBtn').addEventListener('click', () => {
+            const data = {
+                action: 'start_invite',
+                chat: document.getElementById('inviteChat').value,
+                source: inviteSource.value,
+                delay: inviteDelay.value
+            };
+            tg.sendData(JSON.stringify(data));
+            tg.HapticFeedback.impactOccurred('medium');
+        });
+
+        // ---------- ПРОГРЕВ ----------
+        const warmupDelay2 = document.getElementById('warmupDelay2');
+        const warmupDelayVal2 = document.getElementById('warmupDelayVal2');
+        warmupDelay2.addEventListener('input', () => {
+            warmupDelayVal2.innerText = warmupDelay2.value;
+        });
+
+        document.getElementById('startWarmupBtn').addEventListener('click', () => {
+            const data = {
+                action: 'start_warmup',
+                accounts: document.getElementById('warmupAccounts').value,
+                delay: warmupDelay2.value,
+                actions: {
+                    view: document.getElementById('actionView').checked,
+                    like: document.getElementById('actionLike').checked,
+                    comment: document.getElementById('actionComment').checked,
+                    join: document.getElementById('actionJoin').checked
+                }
+            };
+            tg.sendData(JSON.stringify(data));
+            tg.HapticFeedback.impactOccurred('medium');
+        });
+
+        // ---------- СТАТИСТИКА И ПРОФИЛЬ ----------
+        document.getElementById('refreshStatsBtn').addEventListener('click', () => {
+            tg.sendData(JSON.stringify({ action: 'get_stats' }));
+        });
+        document.getElementById('refreshProfileBtn').addEventListener('click', () => {
+            tg.sendData(JSON.stringify({ action: 'get_profile' }));
+        });
+
+        // ---------- ОБРАБОТКА ОТВЕТОВ ОТ БОТА ----------
+        window.handleBotData = function(data) {
+            try {
+                const response = JSON.parse(data);
+                if (response.type === 'parsing_result') {
+                    const resultBox = document.getElementById('parseResult');
+                    resultBox.style.display = 'block';
+                    document.getElementById('parseCount').innerText = response.count || 0;
+                    const listDiv = document.getElementById('parseList');
+                    if (response.data && response.data.length) {
+                        let html = '';
+                        response.data.slice(0, 20).forEach(item => {
+                            if (item.username) {
+                                html += `<div class="result-item">👤 @${item.username} (${item.first_name})</div>`;
+                            } else {
+                                html += `<div class="result-item">📢 ${item.title}</div>`;
+                            }
+                        });
+                        listDiv.innerHTML = html;
+                    } else {
+                        listDiv.innerHTML = '<p>❌ Ничего не найдено</p>';
+                    }
+                } else if (response.type === 'stats') {
+                    document.getElementById('statsContent').innerHTML = `
+                        <p>👥 Всего пользователей: ${response.total_users}</p>
+                        <p>💎 Активных подписок: ${response.active_subs}</p>
+                        <p>💰 Платежей: ${response.total_payments}</p>
+                        <p>⭐ Заработано звёзд: ${response.total_stars}</p>
+                    `;
+                } else if (response.type === 'profile') {
+                    document.getElementById('profileContent').innerHTML = `
+                        <p>🆔 ID: ${response.user_id}</p>
+                        <p>👤 Имя: ${response.first_name}</p>
+                        <p>💎 Подписка: ${response.subscription}</p>
+                        <p>⚡ Потоки: ${response.threads}</p>
+                    `;
+                }
+            } catch (e) {
+                console.log('Ответ бота:', data);
+            }
+        };
+
+        // Инициализация
+        updateConstructorPrice();
+        // Загружаем статистику при старте
+        tg.sendData(JSON.stringify({ action: 'get_stats' }));
+        tg.sendData(JSON.stringify({ action: 'get_profile' }));
     </script>
 </body>
 </html>
