@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nexus Premium • WebApp</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--tg-theme-bg-color, #0a0f1e);
+            color: var(--tg-theme-text-color, #ffffff);
+            padding: 16px;
+            min-height: 100vh;
+        }
+
+        /* Премиум градиенты */
+        .premium-bg {
+            background: linear-gradient(145deg, #1a1f2e, #0f1422);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+        }
+
+        .neon-border {
+            position: relative;
+            border-radius: 24px;
+            background: linear-gradient(145deg, #1e2436, #131826);
+        }
+
+        .neon-border::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(45deg, #ff6b4a, #ff3b7d, #7c4dff, #00c6b4);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+        }
+
+        /* Статус бар */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .status-badge {
+            background: rgba(10, 255, 130, 0.15);
+            border: 1px solid rgba(10, 255, 130, 0.3);
+            color: #0aff82;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #0aff82;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #0aff82;
+            animation: pulse 2s infinite;
+        }
+
+        /* Карточки метрик */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 18px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:active {
+            transform: scale(0.98);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .metric-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--tg-theme-text-color, #fff);
+            line-height: 1.2;
+        }
+
+        /* Список аккаунтов */
+        .account-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .account-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .account-item:active {
+            background: rgba(255,255,255,0.04);
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .account-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .account-phone {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .account-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #0aff82;
+        }
+
+        /* Кнопки действий */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .action-button {
+            background: var(--tg-theme-button-color, #2e7eff);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .action-button:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+
+        .action-button.secondary {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Анимации */
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Скелетон загрузки */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Header */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #a0a8c0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .close-button {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 8px 16px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <span class="app-title">NEXUS PREMIUM</span>
+        <button class="close-button" onclick="Telegram.WebApp.close()">✕</button>
+    </div>
+
+    <!-- Статус бар -->
+    <div class="status-bar">
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            Система активна
+        </div>
+        <div style="color: rgba(255,255,255,0.5); font-size: 14px;">
+            v2.0.0 • АТОМНАЯ
+        </div>
+    </div>
+
+    <!-- Метрики -->
+    <div class="premium-bg neon-border">
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.9);">📊 ДАШБОРД</span>
+            <span style="font-size: 13px; color: rgba(255,255,255,0.3);" id="update-time">обновление...</span>
+        </div>
+        <div class="metrics-grid" id="metrics">
+            <!-- Данные подгрузятся через JS -->
+            <div class="metric-card skeleton" style="height: 90px;"></div>
+            <div class="metric-card skeleton" style="height: 90px;"></div>
+            <div class="metric-card skeleton" style="height: 90px;"></div>
+            <div class="metric-card skeleton" style="height: 90px;"></div>
+        </div>
+    </div>
+
+    <!-- Аккаунты -->
+    <div class="premium-bg" style="margin-top: 16px;">
+        <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.9);">👥 АККАУНТЫ</span>
+            <span style="font-size: 13px; color: #2e7eff;" id="accounts-count">загрузка...</span>
+        </div>
+        <div class="account-list" id="account-list">
+            <!-- Аккаунты подгрузятся через JS -->
+            <div class="account-item skeleton" style="height: 70px;"></div>
+            <div class="account-item skeleton" style="height: 70px;"></div>
+        </div>
+    </div>
+
+    <!-- Действия -->
+    <div class="action-grid">
+        <button class="action-button" onclick="sendCommand('warmup')">
+            🔥 Прогрев
+        </button>
+        <button class="action-button secondary" onclick="sendCommand('add_account')">
+            ➕ Добавить
+        </button>
+        <button class="action-button secondary" onclick="sendCommand('stats')">
+            📊 Статистика
+        </button>
+        <button class="action-button secondary" onclick="sendCommand('settings')">
+            ⚙️ Настройки
+        </button>
+    </div>
+
+    <script>
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+        tg.enableClosingConfirmation();
+
+        // Установка цветовой схемы
+        document.body.style.background = tg.themeParams.bg_color || '#0a0f1e';
+        
+        // Отправка команд в бота
+        function sendCommand(command) {
+            tg.sendData(JSON.stringify({
+                action: command,
+                timestamp: Date.now()
+            }));
+        }
+
+        // Загрузка данных
+        async function loadDashboard() {
+            try {
+                // Здесь будет запрос к твоему API
+                // Пока заглушка
+                setTimeout(() => {
+                    document.getElementById('metrics').innerHTML = `
+                        <div class="metric-card">
+                            <div class="metric-icon">📱</div>
+                            <div class="metric-label">Аккаунты</div>
+                            <div class="metric-value" id="total-accounts">0</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">✅</div>
+                            <div class="metric-label">Активные</div>
+                            <div class="metric-value" id="active-accounts">0</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">🔥</div>
+                            <div class="metric-label">Прогрето</div>
+                            <div class="metric-value" id="warmed">0</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">⏱️</div>
+                            <div class="metric-label">Аптайм</div>
+                            <div class="metric-value" id="uptime">99.9%</div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('update-time').innerHTML = `🟢 ${new Date().toLocaleTimeString('ru-RU')}`;
+                    document.getElementById('accounts-count').innerHTML = '0 активных';
+                    
+                    document.getElementById('account-list').innerHTML = `
+                        <div style="padding: 24px; text-align: center; color: rgba(255,255,255,0.5);">
+                            👋 Аккаунты не добавлены
+                        </div>
+                    `;
+                }, 800);
+            } catch (e) {
+                console.error('Error loading dashboard:', e);
+            }
+        }
+
+        // Обновление данных в реальном времени
+        function updateData(data) {
+            if (data.accounts) {
+                document.getElementById('total-accounts').innerHTML = data.accounts.total || 0;
+                document.getElementById('active-accounts').innerHTML = data.accounts.active || 0;
+                document.getElementById('warmed').innerHTML = data.accounts.warmed || 0;
+                
+                // Обновляем список аккаунтов
+                if (data.accounts.list && data.accounts.list.length > 0) {
+                    let html = '';
+                    data.accounts.list.slice(0, 3).forEach(acc => {
+                        html += `
+                            <div class="account-item">
+                                <div class="account-info">
+                                    <span class="account-name">${acc.name || 'Без имени'}</span>
+                                    <span class="account-phone">${acc.phone}</span>
+                                </div>
+                                <div class="account-status">
+                                    <span class="status-dot" style="background: #0aff82; width: 6px; height: 6px;"></span>
+                                    Активен
+                                </div>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('account-list').innerHTML = html;
+                    document.getElementById('accounts-count').innerHTML = `${data.accounts.list.length} активных`;
+                }
+            }
+        }
+
+        // Инициализация
+        loadDashboard();
+
+        // Обработка данных от бота
+        tg.onEvent('mainButtonClicked', function() {
+            tg.sendData('main_button_pressed');
+        });
+
+        // Периодическое обновление
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>
